@@ -3,10 +3,12 @@ package ar.edu.utn.frsf.isi.dam.reclamosonlinelab04;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.ContextMenu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Reclamo> listaReclamos;
     private ReclamoAdapter adapter;
     private Button btnNuevoReclamo;
-    int FOR_RECLAMO=1;
+    public static int NUEVO_RECLAMO =1;
+    public static int EDITAR_RECLAMO = 2;
     private Intent intentForReclamo;
 
     @Override
@@ -35,6 +38,18 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ReclamoAdapter(this, listaReclamos);
         new ReclamoAdapter(MainActivity.this, listaReclamos);
         listViewReclamos.setAdapter(adapter);
+
+        listViewReclamos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                Reclamo r = (Reclamo) listViewReclamos.getItemAtPosition(pos);
+                Intent i = new Intent(MainActivity.this,FormReclamo.class);
+                i.putExtra("RECLAMO",r);
+                i.putExtra("REQUEST",EDITAR_RECLAMO);
+                startActivityForResult(i,EDITAR_RECLAMO);
+                return true;
+            }
+        });
 
         Runnable r = new Runnable() {
             @Override
@@ -59,11 +74,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 intentForReclamo = new Intent(MainActivity.this,FormReclamo.class);
-                startActivityForResult(intentForReclamo,FOR_RECLAMO);
+                intentForReclamo.putExtra("REQUEST", NUEVO_RECLAMO);
+                startActivityForResult(intentForReclamo, NUEVO_RECLAMO);
             }
         });
 
 
 
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,Intent data){
+        if(resultCode == RESULT_OK){
+            if(requestCode == NUEVO_RECLAMO){
+                Reclamo r = (Reclamo) data.getParcelableExtra("RECLAMO");
+                daoReclamo.crear(r);
+
+                Toast.makeText(MainActivity.this,"Reclamo creado",Toast.LENGTH_LONG);
+            }
+            else {
+                //
+                Toast.makeText(MainActivity.this,"Reclamo editado",Toast.LENGTH_LONG);
+            }
+        }
     }
 }

@@ -28,10 +28,10 @@ public class ReclamoDaoHTTP implements ReclamoDao {
 
     public ReclamoDaoHTTP(){
         //para emulador
-        //server="http://10.0.2.2:3000";
+        server="http://10.0.2.2:3000";
 
         //para celular
-        server="http://192.168.42.43:3000";
+        //server="http://192.168.42.43:3000";
         cliente = new MyGenericHTTPClient(server);
     }
 
@@ -89,6 +89,7 @@ public class ReclamoDaoHTTP implements ReclamoDao {
                 Reclamo recTmp = new Reclamo();
                 recTmp.setId(unaFila.getInt("id"));
                 recTmp.setTitulo(unaFila.getString("titulo"));
+                recTmp.setDetalle(unaFila.getString("detalle"));
                 recTmp.setTipo(this.getTipoReclamoById(unaFila.getInt("tipoId")));
                 recTmp.setEstado(this.getEstadoById(unaFila.getInt("estadoId")));
                 listaReclamos.add(recTmp);
@@ -139,7 +140,7 @@ public class ReclamoDaoHTTP implements ReclamoDao {
 
     @Override
     public void crear(Reclamo r) {
-
+        cliente.post("reclamo",r.toJSON());
     }
 
     @Override

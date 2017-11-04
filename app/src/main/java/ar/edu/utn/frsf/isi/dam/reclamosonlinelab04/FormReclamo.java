@@ -15,9 +15,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 
+import java.util.Date;
 import java.util.List;
 
 import ar.edu.utn.frsf.isi.dam.reclamosonlinelab04.dao.ReclamoDaoHTTP;
+import ar.edu.utn.frsf.isi.dam.reclamosonlinelab04.modelo.Estado;
+import ar.edu.utn.frsf.isi.dam.reclamosonlinelab04.modelo.Reclamo;
 import ar.edu.utn.frsf.isi.dam.reclamosonlinelab04.modelo.TipoReclamo;
 
 public class FormReclamo extends AppCompatActivity {
@@ -52,6 +55,27 @@ public class FormReclamo extends AppCompatActivity {
         adapterTiposReclamos = new ArrayAdapter(FormReclamo.this, android.R.layout.simple_spinner_item, tipoReclamos);
         frmReclamoSpinner.setAdapter(adapterTiposReclamos);
 
+        Intent i = getIntent();
+        Integer req = i.getIntExtra("REQUEST",-1);
+
+        if( req != -1){
+            if(req == MainActivity.EDITAR_RECLAMO){
+                Reclamo r = (Reclamo)i.getParcelableExtra("RECLAMO");
+                frmReclamoTitulo.setText(r.getTitulo());
+                frmReclamoDetalle.setText(r.getDetalle());
+                Integer pos = 0;
+
+                //Un for para esto? Java es crueldad
+                for(TipoReclamo t: tipoReclamos){
+                    if(t.getId() == r.getTipo().getId())
+                        break;
+                    pos++;
+                }
+
+                frmReclamoSpinner.setSelection(pos);
+
+            }
+        }
 
         btnelegirLugar.setOnClickListener(new View.OnClickListener(){
 
@@ -76,6 +100,25 @@ public class FormReclamo extends AppCompatActivity {
             }
         });
 
+
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String titulo = frmReclamoTitulo.getText().toString();
+                String detalle = frmReclamoDetalle.getText().toString();
+                TipoReclamo tipo = (TipoReclamo) frmReclamoSpinner.getSelectedItem();
+                Estado estado = daoHTTP.getEstadoById(1);
+                Date fecha = new Date();
+                Integer id = daoHTTP.reclamos().get(daoHTTP.reclamos().size() - 1).getId() + 1;
+                Reclamo nuevoReclamo = new Reclamo(id,titulo,detalle,fecha,tipo,estado);
+
+                Intent resultado = getIntent();
+                resultado.putExtra("RECLAMO",nuevoReclamo );
+                resultado.putExtra("RESULTADO","OK" );
+                setResult(RESULT_OK, resultado);
+                finish();
+            }
+        });
 
     }
 }
