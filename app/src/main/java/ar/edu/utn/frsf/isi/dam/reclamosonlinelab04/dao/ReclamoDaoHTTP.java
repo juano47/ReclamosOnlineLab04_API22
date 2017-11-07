@@ -145,7 +145,7 @@ public class ReclamoDaoHTTP implements ReclamoDao {
 
     @Override
     public void actualizar(Reclamo r) {
-
+        cliente.put("reclamo/" + r.getId().toString(),r.toJSON());
     }
 
     @Override

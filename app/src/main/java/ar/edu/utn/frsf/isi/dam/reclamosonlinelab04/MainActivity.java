@@ -88,14 +88,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode,Intent data){
         if(resultCode == RESULT_OK){
+            Reclamo r = (Reclamo) data.getParcelableExtra("RECLAMO");
             if(requestCode == NUEVO_RECLAMO){
-                Reclamo r = (Reclamo) data.getParcelableExtra("RECLAMO");
                 daoReclamo.crear(r);
 
                 Toast.makeText(MainActivity.this,"Reclamo creado",Toast.LENGTH_LONG);
             }
             else {
                 //
+                daoReclamo.actualizar(r);
                 Toast.makeText(MainActivity.this,"Reclamo editado",Toast.LENGTH_LONG);
             }
         }

@@ -34,6 +34,8 @@ public class FormReclamo extends AppCompatActivity {
     ReclamoDaoHTTP daoHTTP = new ReclamoDaoHTTP();
     List<TipoReclamo> tipoReclamos;
     ArrayAdapter adapterTiposReclamos;
+    Integer req;
+    Reclamo nuevoReclamo = new Reclamo();
 
     private GoogleMap mapa;
 
@@ -56,11 +58,12 @@ public class FormReclamo extends AppCompatActivity {
         frmReclamoSpinner.setAdapter(adapterTiposReclamos);
 
         Intent i = getIntent();
-        Integer req = i.getIntExtra("REQUEST",-1);
+         req = i.getIntExtra("REQUEST",-1);
 
         if( req != -1){
             if(req == MainActivity.EDITAR_RECLAMO){
                 Reclamo r = (Reclamo)i.getParcelableExtra("RECLAMO");
+                nuevoReclamo = r;
                 frmReclamoTitulo.setText(r.getTitulo());
                 frmReclamoDetalle.setText(r.getDetalle());
                 Integer pos = 0;
@@ -104,13 +107,16 @@ public class FormReclamo extends AppCompatActivity {
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String titulo = frmReclamoTitulo.getText().toString();
-                String detalle = frmReclamoDetalle.getText().toString();
-                TipoReclamo tipo = (TipoReclamo) frmReclamoSpinner.getSelectedItem();
-                Estado estado = daoHTTP.getEstadoById(1);
-                Date fecha = new Date();
-                Integer id = daoHTTP.reclamos().get(daoHTTP.reclamos().size() - 1).getId() + 1;
-                Reclamo nuevoReclamo = new Reclamo(id,titulo,detalle,fecha,tipo,estado);
+                nuevoReclamo.setTitulo( frmReclamoTitulo.getText().toString());
+                nuevoReclamo.setDetalle( frmReclamoDetalle.getText().toString());
+                nuevoReclamo.setTipo( (TipoReclamo) frmReclamoSpinner.getSelectedItem());
+                nuevoReclamo.setEstado( daoHTTP.getEstadoById(1));
+
+                if(req != MainActivity.EDITAR_RECLAMO){
+                nuevoReclamo.setFecha( new Date());
+                nuevoReclamo.setId( daoHTTP.reclamos().get(daoHTTP.reclamos().size() - 1).getId() + 1);
+                }
+
 
                 Intent resultado = getIntent();
                 resultado.putExtra("RECLAMO",nuevoReclamo );
