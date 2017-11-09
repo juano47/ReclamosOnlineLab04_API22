@@ -129,6 +129,8 @@ public class Reclamo implements Parcelable {
             obj.put("tipoId",this.getTipo().getId());
             obj.put("estadoId",this.getEstado().getId());
             obj.put("fecha",this.getFecha());
+            obj.put("latitud",this.ubicacion.latitude);
+            obj.put("longitud",this.ubicacion.longitude);
 
             return obj.toString();
         }

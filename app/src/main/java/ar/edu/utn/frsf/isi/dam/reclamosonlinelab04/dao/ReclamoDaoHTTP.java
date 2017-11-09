@@ -2,6 +2,8 @@ package ar.edu.utn.frsf.isi.dam.reclamosonlinelab04.dao;
 
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,6 +94,16 @@ public class ReclamoDaoHTTP implements ReclamoDao {
                 recTmp.setDetalle(unaFila.getString("detalle"));
                 recTmp.setTipo(this.getTipoReclamoById(unaFila.getInt("tipoId")));
                 recTmp.setEstado(this.getEstadoById(unaFila.getInt("estadoId")));
+                try{
+                double lat = unaFila.getDouble("latitud");
+                double longitud = unaFila.getDouble("longitud");
+                LatLng ubicacion = new LatLng(lat,longitud);
+                recTmp.setUbicacion(ubicacion);
+                }
+                catch (Exception ex)
+                {
+                    recTmp.setUbicacion(new LatLng(-180, 180));
+                }
                 listaReclamos.add(recTmp);
             }
         } catch (JSONException e) {

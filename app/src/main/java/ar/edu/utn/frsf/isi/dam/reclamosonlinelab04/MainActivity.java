@@ -99,6 +99,25 @@ public class MainActivity extends AppCompatActivity {
                 daoReclamo.actualizar(r);
                 Toast.makeText(MainActivity.this,"Reclamo editado",Toast.LENGTH_LONG);
             }
+
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    List<Reclamo> rec = daoReclamo.reclamos();
+                    listaReclamos.clear();
+                    listaReclamos.addAll(rec);
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+
+                            adapter.notifyDataSetChanged();
+
+                        }
+                    });
+                }
+            };
+            Thread t = new Thread(runnable);
+            t.start();
+
         }
     }
 }
